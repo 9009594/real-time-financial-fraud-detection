@@ -20,3 +20,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Raw datasets
+data/raw/*.csv
