@@ -2,7 +2,7 @@
 
 This is a real-time financial fraud detection pipeline built using Python, streaming technologies, machine learning, and data analytics.
 
-## Project Structure
+## The Project Structure
 
 data/ - Raw and processed datasets
 producer/ - Transaction data producer
