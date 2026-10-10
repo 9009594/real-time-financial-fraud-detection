@@ -1,8 +1,19 @@
-import pandas as pd
+
+import os
+import sys
 import time
 import json
+import pandas as pd
 
-DATA_PATH = "data/processed/creditcard_feature_engineered.csv"
+# Allow importing the fraud detection module
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, BASE_DIR)
+
+from streaming.fraud_detection import predict_transaction
+
+DATA_PATH = os.path.join(
+    BASE_DIR, "data", "processed", "creditcard_features.csv"
+)
 
 df = pd.read_csv(DATA_PATH)
 
@@ -11,52 +22,40 @@ print("Total transactions:", len(df))
 
 sample_transactions = df.sample(n=20, random_state=42).reset_index(drop=True)
 
-
-print("\nStarting real-time transaction stream...")
+print("\nStarting real-time fraud detection stream...")
 print("=" * 60)
 
 for index, row in sample_transactions.iterrows():
+    period = row["Time_Period"]
+
     transaction = {
-        "transaction_id": index + 1,
         "Time": float(row["Time"]),
         "Amount": float(row["Amount"]),
-        "V1": float(row["V1"]),
-        "V2": float(row["V2"]),
-        "V3": float(row["V3"]),
-        "V4": float(row["V4"]),
-        "V5": float(row["V5"]),
-        "V6": float(row["V6"]),
-        "V7": float(row["V7"]),
-        "V8": float(row["V8"]),
-        "V9": float(row["V9"]),
-        "V10": float(row["V10"]),
-        "V11": float(row["V11"]),
-        "V12": float(row["V12"]),
-        "V13": float(row["V13"]),
-        "V14": float(row["V14"]),
-        "V15": float(row["V15"]),
-        "V16": float(row["V16"]),
-        "V17": float(row["V17"]),
-        "V18": float(row["V18"]),
-        "V19": float(row["V19"]),
-        "V20": float(row["V20"]),
-        "V21": float(row["V21"]),
-        "V22": float(row["V22"]),
-        "V23": float(row["V23"]),
-        "V24": float(row["V24"]),
-        "V25": float(row["V25"]),
-        "V26": float(row["V26"]),
-        "V27": float(row["V27"]),
-        "V28": float(row["V28"]),
+        "Hour": int(row["Hour"]),
         "Log_Amount": float(row["Log_Amount"]),
-        "Class": int(row["Class"]),
+        "Time_Period_Evening": int(period == "Evening"),
+        "Time_Period_Morning": int(period == "Morning"),
+        "Time_Period_Night": int(period == "Night"),
     }
 
-    print(json.dumps(transaction, indent=2))
+    # Add anonymized transaction features V1 to V28
+    for feature_num in range(1, 29):
+        column = f"V{feature_num}"
+        transaction[column] = float(row[column])
+
+    # Run the fraud detection model
+    result = predict_transaction(transaction)
+
+    print(json.dumps({
+        "transaction_id": index + 1,
+        "actual_class": int(row["Class"]),
+        "predicted_result": result["prediction"],
+        "fraud_probability": result["fraud_probability"],
+    }, indent=2))
 
     print("-" * 60)
 
-    # Simulate real-time delay
+    # Simulate a one-second real-time delay
     time.sleep(1)
 
 print("\nTransaction stream completed!")
