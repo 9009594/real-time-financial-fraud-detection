@@ -1,6 +1,6 @@
-### A Real-Time Financial Fraud Detection
+ii### A Real-Time Financial Fraud Detection
 
-This is a real-time financial fraud detection pipeline built using Python, streaming technologies, machine learning, and data analytics.
+This is a real-time financial fraud detection pipeline built using Python, streaming technologies, machine learning,data science and data analytics.
 
 ## The Project Structure.
 
@@ -9,7 +9,7 @@ producer/ - Transaction data producer
 streaming/ - Real-time streaming pipeline
 models/ - Machine learning models
 database/ - Database components
-notebooks/ - Data analysis and experimentation
+notebooks/ - Data analysis and its experimentation
 monitoring/ - Pipeline and model monitoring
 tests/ - Project tests
 docs/ - Project documentation
