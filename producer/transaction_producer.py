@@ -1,15 +1,15 @@
-
 import os
 import sys
 import time
 import json
 import pandas as pd
 
-# Allow importing the fraud detection module
+# Allow importing project modules
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
 
 from streaming.fraud_detection import predict_transaction
+from streaming.save_predictions import save_prediction
 
 DATA_PATH = os.path.join(
     BASE_DIR, "data", "processed", "creditcard_features.csv"
@@ -43,12 +43,19 @@ for index, row in sample_transactions.iterrows():
         column = f"V{feature_num}"
         transaction[column] = float(row[column])
 
-    # Run the fraud detection model
+    # Predict transaction
     result = predict_transaction(transaction)
 
+    transaction_id = index + 1
+    actual_class = int(row["Class"])
+
+    # Save prediction to CSV
+    save_prediction(transaction_id, actual_class, result)
+
+    # Display result
     print(json.dumps({
-        "transaction_id": index + 1,
-        "actual_class": int(row["Class"]),
+        "transaction_id": transaction_id,
+        "actual_class": actual_class,
         "predicted_result": result["prediction"],
         "fraud_probability": result["fraud_probability"],
     }, indent=2))
@@ -59,3 +66,4 @@ for index, row in sample_transactions.iterrows():
     time.sleep(1)
 
 print("\nTransaction stream completed!")
+print("All prediction records saved to data/processed/fraud_predictions.csv")
