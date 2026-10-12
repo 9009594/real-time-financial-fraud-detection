@@ -54,10 +54,11 @@ for index, row in sample_transactions.iterrows():
 
     # Display result
     print(json.dumps({
-        "transaction_id": transaction_id,
-        "actual_class": actual_class,
-        "predicted_result": result["prediction"],
-        "fraud_probability": result["fraud_probability"],
+    "transaction_id": transaction_id,
+    "actual_class": actual_class,
+    "predicted_result": result["prediction"],
+    "fraud_probability": result["fraud_probability"],
+    "risk_alert": result["risk_alert"],
     }, indent=2))
 
     print("-" * 60)

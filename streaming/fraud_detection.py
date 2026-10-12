@@ -15,8 +15,9 @@ print("Fraud detection model loaded successfully!")
 print("Feature columns loaded:", len(feature_columns))
 
 
+
 def predict_transaction(transaction):
-    """Predict whether a transaction is normal or fraudulent."""
+    """Predict transaction status and generate a risk alert."""
 
     transaction_df = pd.DataFrame([transaction])
     transaction_df = transaction_df.reindex(
@@ -26,10 +27,19 @@ def predict_transaction(transaction):
 
     prediction = model.predict(transaction_df)[0]
     fraud_probability = model.predict_proba(transaction_df)[0][1]
+    probability = round(float(fraud_probability), 4)
+
+    if prediction == 1 and probability >= 0.70:
+        risk_alert = "HIGH_RISK_ALERT"
+    elif prediction == 1:
+        risk_alert = "FRAUD_REVIEW"
+    else:
+        risk_alert = "NORMAL"
 
     return {
         "prediction": "FRAUD" if prediction == 1 else "NORMAL",
-        "fraud_probability": round(float(fraud_probability), 4)
+        "fraud_probability": probability,
+        "risk_alert": risk_alert
     }
 
 

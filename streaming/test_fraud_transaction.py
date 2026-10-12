@@ -1,4 +1,3 @@
-
 import os
 import sys
 import pandas as pd
@@ -9,9 +8,7 @@ sys.path.insert(0, BASE_DIR)
 
 from streaming.fraud_detection import predict_transaction
 
-DATA_PATH = os.path.join(
-    BASE_DIR, "data", "processed", "creditcard_features.csv"
-)
+DATA_PATH = os.path.join(BASE_DIR, "data", "processed", "creditcard_features.csv")
 
 # Load dataset and select a known fraud transaction
 df = pd.read_csv(DATA_PATH)
@@ -40,4 +37,5 @@ print("=" * 40)
 print("Actual class:", actual_class)
 print("Predicted result:", result["prediction"])
 print("Fraud probability:", result["fraud_probability"])
+print("Risk alert:", result["risk_alert"])
 print("Correct prediction:", result["prediction"] == "FRAUD")
