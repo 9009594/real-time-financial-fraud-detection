@@ -25,9 +25,9 @@ def predict_transaction(transaction):
         fill_value=0
     )
 
-    prediction = model.predict(transaction_df)[0]
     fraud_probability = model.predict_proba(transaction_df)[0][1]
     probability = round(float(fraud_probability), 4)
+    prediction = 1 if probability >= 0.40 else 0
 
     if prediction == 1 and probability >= 0.70:
         risk_alert = "HIGH_RISK_ALERT"
