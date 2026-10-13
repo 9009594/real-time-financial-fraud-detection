@@ -7,9 +7,7 @@ sys.path.insert(0, BASE_DIR)
 
 from streaming.fraud_detection import predict_transaction
 
-DATA_PATH = os.path.join(
-    BASE_DIR, "data", "processed", "creditcard_features.csv"
-)
+DATA_PATH = os.path.join(BASE_DIR, "data", "processed", "creditcard_features.csv")
 
 df = pd.read_csv(DATA_PATH)
 
@@ -31,12 +29,15 @@ for index, row in test_rows.iterrows():
     result = predict_transaction(transaction)
     actual = "FRAUD" if int(row["Class"]) == 1 else "NORMAL"
 
-    results.append({
-        "actual": actual,
-        "predicted": result["prediction"],
-        "fraud_probability": result["fraud_probability"],
-        "correct": actual == result["prediction"]
-    })
+    results.append(
+        {
+            "actual": actual,
+            "predicted": result["prediction"],
+            "fraud_probability": result["fraud_probability"],
+            "risk_alert": result["risk_alert"],
+            "correct": actual == result["prediction"],
+        }
+    )
 
 results_df = pd.DataFrame(results)
 
