@@ -1,4 +1,3 @@
-
 import os
 import joblib
 import pandas as pd
@@ -15,15 +14,11 @@ print("Fraud detection model loaded successfully!")
 print("Feature columns loaded:", len(feature_columns))
 
 
-
 def predict_transaction(transaction):
     """Predict transaction status and generate a risk alert."""
 
     transaction_df = pd.DataFrame([transaction])
-    transaction_df = transaction_df.reindex(
-        columns=feature_columns,
-        fill_value=0
-    )
+    transaction_df = transaction_df.reindex(columns=feature_columns, fill_value=0)
 
     fraud_probability = model.predict_proba(transaction_df)[0][1]
     probability = round(float(fraud_probability), 4)
@@ -39,14 +34,12 @@ def predict_transaction(transaction):
     return {
         "prediction": "FRAUD" if prediction == 1 else "NORMAL",
         "fraud_probability": probability,
-        "risk_alert": risk_alert
+        "risk_alert": risk_alert,
     }
 
 
 if __name__ == "__main__":
-    DATA_PATH = os.path.join(
-        BASE_DIR, "data", "processed", "creditcard_features.csv"
-    )
+    DATA_PATH = os.path.join(BASE_DIR, "data", "processed", "creditcard_features.csv")
 
     test_data = pd.read_csv(DATA_PATH)
     test_row = test_data.iloc[0]
