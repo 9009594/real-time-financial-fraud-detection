@@ -24,3 +24,21 @@ Thumbs.db
 # Raw datasets
 data/raw/*.csv
 data/processed/*.csv
+# 2. Ensure .gitignore exists and protect local/generated files
+if (!(Test-Path ".gitignore")) {
+    New-Item -ItemType File -Path ".gitignore" | Out-Null
+}
+
+$ignoreRules = @(
+    ".venv/",
+    "__pycache__/",
+    "*.pyc",
+    "data/processed/*.db"
+)
+
+$currentIgnore = Get-Content ".gitignore" -ErrorAction SilentlyContinue
+foreach ($rule in $ignoreRules) {
+    if ($currentIgnore -notcontains $rule) {
+        Add-Content -Path ".gitignore" -Value $rule
+    }
+}

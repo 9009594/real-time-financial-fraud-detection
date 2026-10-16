@@ -4,16 +4,17 @@ import time
 import json
 import pandas as pd
 
+
 # Allow importing project modules
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
 
+from database.database_manager import save_prediction_to_database
 from streaming.fraud_detection import predict_transaction
 from streaming.save_predictions import save_prediction
 
-DATA_PATH = os.path.join(
-    BASE_DIR, "data", "processed", "creditcard_features.csv"
-)
+
+DATA_PATH = os.path.join(BASE_DIR, "data", "processed", "creditcard_features.csv")
 
 df = pd.read_csv(DATA_PATH)
 
@@ -52,14 +53,21 @@ for index, row in sample_transactions.iterrows():
     # Save prediction to CSV
     save_prediction(transaction_id, actual_class, result)
 
+    # Save prediction to SQLite database
+    save_prediction_to_database(transaction_id, actual_class, result)
     # Display result
-    print(json.dumps({
-    "transaction_id": transaction_id,
-    "actual_class": actual_class,
-    "predicted_result": result["prediction"],
-    "fraud_probability": result["fraud_probability"],
-    "risk_alert": result["risk_alert"],
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "transaction_id": transaction_id,
+                "actual_class": actual_class,
+                "predicted_result": result["prediction"],
+                "fraud_probability": result["fraud_probability"],
+                "risk_alert": result["risk_alert"],
+            },
+            indent=2,
+        )
+    )
 
     print("-" * 60)
 
